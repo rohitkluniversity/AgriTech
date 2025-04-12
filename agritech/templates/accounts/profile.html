@@ -1,0 +1,296 @@
+{% extends 'base.html' %}
+
+{% block title %}My Profile - AgriTech{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-lg-3">
+            <div class="card mb-4">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">Profile</h5>
+                </div>
+                <div class="card-body text-center">
+                    {% if user_profile.profile_picture %}
+                    <img src="{{ user_profile.profile_picture }}" alt="{{ user.username }}" class="rounded-circle img-fluid mb-3" style="width: 150px; height: 150px; object-fit: cover;">
+                    {% else %}
+                    <div class="avatar bg-success text-white rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 150px; height: 150px;">
+                        <i class="fas fa-user fa-5x"></i>
+                    </div>
+                    {% endif %}
+                    <h4>{{ user.first_name }} {{ user.last_name }}</h4>
+                    <p class="text-muted">@{{ user.username }}</p>
+                    <p class="mb-1">
+                        <span class="badge bg-success">{{ user_profile.get_user_type_display }}</span>
+                    </p>
+                    <p class="text-muted small mb-0">
+                        Member since: {{ user.date_joined|date:"F d, Y" }}
+                    </p>
+                </div>
+            </div>
+            
+            <div class="card mb-4">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">Quick Links</h5>
+                </div>
+                <div class="card-body">
+                    <nav class="nav flex-column">
+                        <a class="nav-link active" href="#profile" data-bs-toggle="tab">
+                            <i class="fas fa-user-circle me-2"></i> Profile
+                        </a>
+                        {% if user_profile.user_type == 'seller' %}
+                        <a class="nav-link" href="#listings" data-bs-toggle="tab">
+                            <i class="fas fa-store me-2"></i> My Listings
+                        </a>
+                        <a class="nav-link" href="{% url 'create_listing' %}">
+                            <i class="fas fa-plus-circle me-2"></i> Create Listing
+                        </a>
+                        {% endif %}
+                        <a class="nav-link" href="#orders" data-bs-toggle="tab">
+                            <i class="fas fa-shopping-cart me-2"></i> My Orders
+                        </a>
+                        <a class="nav-link text-danger" href="{% url 'logout' %}">
+                            <i class="fas fa-sign-out-alt me-2"></i> Logout
+                        </a>
+                    </nav>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-9">
+            <div class="tab-content">
+                <!-- Profile Section -->
+                <div class="tab-pane fade show active" id="profile">
+                    <div class="card mb-4">
+                        <div class="card-header bg-success text-white">
+                            <h5 class="mb-0">Edit Profile</h5>
+                        </div>
+                        <div class="card-body">
+                            <form method="post">
+                                {% csrf_token %}
+                                
+                                {% if messages %}
+                                {% for message in messages %}
+                                <div class="alert alert-{{ message.tags }}">
+                                    {{ message }}
+                                </div>
+                                {% endfor %}
+                                {% endif %}
+                                
+                                <div class="row mb-4">
+                                    <div class="col-12 mb-3">
+                                        <h5 class="text-success">Personal Information</h5>
+                                        <hr>
+                                    </div>
+                                    
+                                    <div class="col-md-6 mb-3">
+                                        <label for="{{ form.first_name.id_for_label }}" class="form-label">First Name</label>
+                                        {{ form.first_name.errors }}
+                                        <input type="text" name="first_name" id="{{ form.first_name.id_for_label }}" class="form-control" value="{{ form.first_name.value }}">
+                                    </div>
+                                    
+                                    <div class="col-md-6 mb-3">
+                                        <label for="{{ form.last_name.id_for_label }}" class="form-label">Last Name</label>
+                                        {{ form.last_name.errors }}
+                                        <input type="text" name="last_name" id="{{ form.last_name.id_for_label }}" class="form-control" value="{{ form.last_name.value }}">
+                                    </div>
+                                    
+                                    <div class="col-md-6 mb-3">
+                                        <label for="{{ form.email.id_for_label }}" class="form-label">Email</label>
+                                        {{ form.email.errors }}
+                                        <input type="email" name="email" id="{{ form.email.id_for_label }}" class="form-control" value="{{ form.email.value }}">
+                                    </div>
+                                    
+                                    <div class="col-md-6 mb-3">
+                                        <label for="{{ form.phone_number.id_for_label }}" class="form-label">Phone Number</label>
+                                        {{ form.phone_number.errors }}
+                                        <div class="input-group">
+                                            <span class="input-group-text"><i class="fas fa-phone"></i></span>
+                                            <input type="text" name="{{ form.phone_number.name }}" id="{{ form.phone_number.id_for_label }}" class="form-control" value="{{ form.phone_number.value|default:'' }}">
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="row mb-4">
+                                    <div class="col-12 mb-3">
+                                        <h5 class="text-success">Additional Information</h5>
+                                        <hr>
+                                    </div>
+                                    
+                                    <div class="col-md-6 mb-3">
+                                        <label for="{{ form.preferred_language.id_for_label }}" class="form-label">Preferred Language</label>
+                                        {{ form.preferred_language.errors }}
+                                        <select name="{{ form.preferred_language.name }}" id="{{ form.preferred_language.id_for_label }}" class="form-select">
+                                            {% for choice in form.preferred_language.field.choices %}
+                                            <option value="{{ choice.0 }}" {% if form.preferred_language.value == choice.0 %}selected{% endif %}>{{ choice.1 }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                    
+                                    <div class="col-md-6 mb-3">
+                                        <label for="{{ form.profile_picture.id_for_label }}" class="form-label">Profile Picture URL</label>
+                                        {{ form.profile_picture.errors }}
+                                        <input type="url" name="{{ form.profile_picture.name }}" id="{{ form.profile_picture.id_for_label }}" class="form-control" value="{{ form.profile_picture.value|default:'' }}">
+                                        <div class="form-text">Enter a URL to an image for your profile picture.</div>
+                                    </div>
+                                    
+                                    <div class="col-12 mb-3">
+                                        <label for="{{ form.address.id_for_label }}" class="form-label">Address</label>
+                                        {{ form.address.errors }}
+                                        <textarea name="{{ form.address.name }}" id="{{ form.address.id_for_label }}" class="form-control" rows="3">{{ form.address.value|default:'' }}</textarea>
+                                    </div>
+                                </div>
+                                
+                                <div class="text-start">
+                                    <p class="text-muted mb-3">Account type: <strong>{{ user_profile.get_user_type_display }}</strong></p>
+                                    <button type="submit" class="btn btn-success">Update Profile</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-header bg-success text-white">
+                            <h5 class="mb-0">Account Security</h5>
+                        </div>
+                        <div class="card-body">
+                            <p class="mb-3">Want to change your password?</p>
+                            <a href="#" class="btn btn-outline-success">Change Password</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Seller Listings Section -->
+                {% if user_profile.user_type == 'seller' %}
+                <div class="tab-pane fade" id="listings">
+                    <div class="card">
+                        <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">My Listings</h5>
+                            <a href="{% url 'create_listing' %}" class="btn btn-light btn-sm">
+                                <i class="fas fa-plus me-1"></i> Add New
+                            </a>
+                        </div>
+                        <div class="card-body">
+                            {% if products %}
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Product</th>
+                                            <th>Category</th>
+                                            <th>Price</th>
+                                            <th>Quantity</th>
+                                            <th>Date Added</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for product in products %}
+                                        <tr>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    {% if product.image_url %}
+                                                    <img src="{{ product.image_url }}" alt="{{ product.title }}" class="me-2" style="width: 40px; height: 40px; object-fit: cover;">
+                                                    {% else %}
+                                                    <div class="bg-light d-flex align-items-center justify-content-center me-2" style="width: 40px; height: 40px;">
+                                                        <i class="fas fa-seedling text-success"></i>
+                                                    </div>
+                                                    {% endif %}
+                                                    <span>{{ product.title }}</span>
+                                                </div>
+                                            </td>
+                                            <td>{{ product.category.name }}</td>
+                                            <td>₹{{ product.price }}</td>
+                                            <td>{{ product.quantity }}</td>
+                                            <td>{{ product.created_at|date:"M d, Y" }}</td>
+                                            <td>
+                                                <a href="{% url 'marketplace_detail' product.id %}" class="btn btn-sm btn-outline-success">
+                                                    <i class="fas fa-eye"></i>
+                                                </a>
+                                                <a href="#" class="btn btn-sm btn-outline-primary">
+                                                    <i class="fas fa-edit"></i>
+                                                </a>
+                                                <button class="btn btn-sm btn-outline-danger">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                            {% else %}
+                            <div class="text-center py-5">
+                                <i class="fas fa-store fa-4x text-muted mb-3"></i>
+                                <h5>No Listings Yet</h5>
+                                <p class="text-muted">You haven't created any product listings yet.</p>
+                                <a href="{% url 'create_listing' %}" class="btn btn-success">Create Your First Listing</a>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+                
+                <!-- Orders Section -->
+                <div class="tab-pane fade" id="orders">
+                    <div class="card">
+                        <div class="card-header bg-success text-white">
+                            <h5 class="mb-0">My Orders</h5>
+                        </div>
+                        <div class="card-body">
+                            {% if orders %}
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Order ID</th>
+                                            <th>Product</th>
+                                            <th>Quantity</th>
+                                            <th>Total Price</th>
+                                            <th>Status</th>
+                                            <th>Date</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for order in orders %}
+                                        <tr>
+                                            <td>#{{ order.id }}</td>
+                                            <td>{{ order.product.title }}</td>
+                                            <td>{{ order.quantity }}</td>
+                                            <td>₹{{ order.total_price }}</td>
+                                            <td>
+                                                {% if order.status == 'pending' %}
+                                                <span class="badge bg-warning text-dark">{{ order.get_status_display }}</span>
+                                                {% elif order.status == 'processing' %}
+                                                <span class="badge bg-info">{{ order.get_status_display }}</span>
+                                                {% elif order.status == 'shipped' %}
+                                                <span class="badge bg-primary">{{ order.get_status_display }}</span>
+                                                {% elif order.status == 'delivered' %}
+                                                <span class="badge bg-success">{{ order.get_status_display }}</span>
+                                                {% elif order.status == 'cancelled' %}
+                                                <span class="badge bg-danger">{{ order.get_status_display }}</span>
+                                                {% endif %}
+                                            </td>
+                                            <td>{{ order.created_at|date:"M d, Y" }}</td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                            {% else %}
+                            <div class="text-center py-5">
+                                <i class="fas fa-shopping-cart fa-4x text-muted mb-3"></i>
+                                <h5>No Orders Yet</h5>
+                                <p class="text-muted">You haven't placed any orders yet.</p>
+                                <a href="{% url 'marketplace_list' %}" class="btn btn-success">Browse Marketplace</a>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

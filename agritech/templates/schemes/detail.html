@@ -1,0 +1,122 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ scheme.title }} - Government Schemes - AgriTech{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'schemes_list' %}">Government Schemes</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{{ scheme.title }}</li>
+        </ol>
+    </nav>
+
+    <div class="row">
+        <div class="col-lg-8">
+            <article class="scheme-detail">
+                <h1 class="text-success mb-3">{{ scheme.title }}</h1>
+                {% if scheme.featured %}
+                <span class="badge bg-success mb-3">Featured Scheme</span>
+                {% endif %}
+                
+                <div class="mb-4">
+                    <small class="text-muted">
+                        <i class="fas fa-calendar-alt me-1"></i> Updated: {{ scheme.updated_at|date:"F d, Y" }}
+                    </small>
+                </div>
+                
+                <div class="scheme-content mb-5">
+                    <h3 class="text-success mb-3">Overview</h3>
+                    <div class="content-section">
+                        {{ scheme.content|linebreaks }}
+                    </div>
+                    
+                    <h3 class="text-success mt-4 mb-3">Eligibility Criteria</h3>
+                    <div class="content-section">
+                        {{ scheme.eligibility_criteria|linebreaks }}
+                    </div>
+                    
+                    <h3 class="text-success mt-4 mb-3">Benefits</h3>
+                    <div class="content-section">
+                        {{ scheme.benefits|linebreaks }}
+                    </div>
+                    
+                    <h3 class="text-success mt-4 mb-3">Application Process</h3>
+                    <div class="content-section">
+                        {{ scheme.application_process|linebreaks }}
+                    </div>
+                    
+                    <h3 class="text-success mt-4 mb-3">Contact Information</h3>
+                    <div class="content-section">
+                        {{ scheme.contact_information|linebreaks }}
+                    </div>
+                </div>
+                
+                <div class="d-flex justify-content-between mt-5">
+                    <a href="{% url 'schemes_list' %}" class="btn btn-outline-secondary">
+                        <i class="fas fa-arrow-left me-1"></i> Back to Schemes
+                    </a>
+                    
+                    <!-- Share buttons -->
+                    <div class="share-buttons">
+                        <button class="btn btn-outline-primary" onclick="window.open('https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(window.location.href), '_blank')">
+                            <i class="fab fa-facebook-f"></i>
+                        </button>
+                        <button class="btn btn-outline-info" onclick="window.open('https://twitter.com/intent/tweet?url=' + encodeURIComponent(window.location.href) + '&text=' + encodeURIComponent('{{ scheme.title }}'), '_blank')">
+                            <i class="fab fa-twitter"></i>
+                        </button>
+                        <button class="btn btn-outline-success" onclick="window.open('https://api.whatsapp.com/send?text=' + encodeURIComponent('{{ scheme.title }} - ' + window.location.href), '_blank')">
+                            <i class="fab fa-whatsapp"></i>
+                        </button>
+                    </div>
+                </div>
+            </article>
+        </div>
+        
+        <div class="col-lg-4">
+            <div class="card mb-4">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">Scheme Summary</h5>
+                </div>
+                <div class="card-body">
+                    <ul class="list-unstyled mb-0">
+                        <li class="mb-2">
+                            <strong><i class="fas fa-check-circle text-success me-2"></i>Title:</strong>
+                            {{ scheme.title }}
+                        </li>
+                        <li class="mb-2">
+                            <strong><i class="fas fa-language text-success me-2"></i>Language:</strong>
+                            {{ scheme.get_language_display }}
+                        </li>
+                        <li>
+                            <strong><i class="fas fa-calendar-alt text-success me-2"></i>Published:</strong>
+                            {{ scheme.created_at|date:"F d, Y" }}
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">Need Help?</h5>
+                </div>
+                <div class="card-body">
+                    <p>If you need assistance with this scheme or have questions, you can contact us:</p>
+                    <ul class="list-unstyled mb-0">
+                        <li class="mb-2">
+                            <i class="fas fa-phone text-success me-2"></i> +1 234 567 8901
+                        </li>
+                        <li class="mb-2">
+                            <i class="fas fa-envelope text-success me-2"></i> help@agritech.com
+                        </li>
+                        <li>
+                            <i class="fas fa-comment text-success me-2"></i> Live chat available on weekdays, 9 AM - 5 PM
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

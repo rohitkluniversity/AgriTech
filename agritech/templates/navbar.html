@@ -1,0 +1,75 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-success">
+    <div class="container">
+        <a class="navbar-brand" href="{% url 'home' %}">
+            <i class="fas fa-leaf"></i> AgriTech
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item">
+                    <a class="nav-link {% if request.path == '/' %}active{% endif %}" href="{% url 'home' %}">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if 'schemes' in request.path %}active{% endif %}" href="{% url 'schemes_list' %}">Schemes</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if 'farming-practices' in request.path %}active{% endif %}" href="{% url 'practices_list' %}">Practices</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if 'technologies' in request.path %}active{% endif %}" href="{% url 'technologies_list' %}">Tech</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if 'marketplace' in request.path %}active{% endif %}" href="{% url 'marketplace_list' %}">Market</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if 'educational-resources' in request.path %}active{% endif %}" href="{% url 'educational_list' %}">Education</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if 'blog' in request.path %}active{% endif %}" href="{% url 'blog_list' %}">Blog</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if '/admin' in request.path %}active{% endif %}" href="/admin/">Admin</a>
+                </li>
+            </ul>
+            <ul class="navbar-nav">
+                {% if user.is_authenticated %}
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        {% if user.profile.profile_picture %}
+                        <img src="{{ user.profile.profile_picture }}" alt="Profile" class="rounded-circle" width="24" height="24">
+                        {% else %}
+                        <i class="fas fa-user-circle"></i>
+                        {% endif %}
+                        {{ user.username }}
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <li><a class="dropdown-item" href="{% url 'profile' %}">My Profile</a></li>
+                        {% if user.profile.user_type == 'seller' %}
+                        <li><a class="dropdown-item" href="{% url 'create_listing' %}">Create Listing</a></li>
+                        {% endif %}
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="{% url 'logout' %}">Logout</a></li>
+                    </ul>
+                </li>
+                {% else %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'login' %}">Login</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'register' %}">Register</a>
+                </li>
+                {% endif %}
+                <li class="nav-item ms-2">
+                    <form class="d-flex" action="{% url 'search' %}" method="get">
+                        <input class="form-control me-2" type="search" placeholder="Search..." name="query" aria-label="Search">
+                        <button class="btn btn-outline-light" type="submit">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </form>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>

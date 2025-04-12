@@ -1,0 +1,290 @@
+{% extends 'base.html' %}
+
+{% block title %}AgriTech - Empowering Farmers with Technology and Resources{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<div class="hero-section bg-success text-white text-center py-5">
+    <div class="container">
+        <h1 class="display-4 fw-bold"><i class="fas fa-leaf"></i> Welcome to AgriTech</h1>
+        <p class="lead">Empowering farmers with government schemes, best practices, technologies, and market access</p>
+        <div class="mt-4">
+            <a href="{% url 'schemes_list' %}" class="btn btn-light btn-lg me-2">Explore Schemes</a>
+            <a href="{% url 'marketplace_list' %}" class="btn btn-outline-light btn-lg">Visit Marketplace</a>
+        </div>
+    </div>
+</div>
+
+<!-- Features Section -->
+<div class="container mt-5">
+    <h2 class="text-center mb-4">How AgriTech Helps Farmers</h2>
+    <div class="row g-4">
+        <div class="col-md-3">
+            <div class="card h-100 text-center shadow-sm">
+                <div class="card-body">
+                    <i class="fas fa-government fa-3x text-success mb-3"></i>
+                    <h5 class="card-title">Government Schemes</h5>
+                    <p class="card-text">Access information about government schemes, subsidies, and support programs for farmers.</p>
+                    <a href="{% url 'schemes_list' %}" class="btn btn-outline-success">Learn More</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card h-100 text-center shadow-sm">
+                <div class="card-body">
+                    <i class="fas fa-seedling fa-3x text-success mb-3"></i>
+                    <h5 class="card-title">Farming Practices</h5>
+                    <p class="card-text">Discover modern and traditional farming methods to improve crop yield and quality.</p>
+                    <a href="{% url 'practices_list' %}" class="btn btn-outline-success">Learn More</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card h-100 text-center shadow-sm">
+                <div class="card-body">
+                    <i class="fas fa-tractor fa-3x text-success mb-3"></i>
+                    <h5 class="card-title">Agricultural Technologies</h5>
+                    <p class="card-text">Explore innovative agricultural technologies to modernize your farming operations.</p>
+                    <a href="{% url 'technologies_list' %}" class="btn btn-outline-success">Learn More</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card h-100 text-center shadow-sm">
+                <div class="card-body">
+                    <i class="fas fa-store fa-3x text-success mb-3"></i>
+                    <h5 class="card-title">Marketplace</h5>
+                    <p class="card-text">Buy and sell agricultural products directly, eliminating middlemen and maximizing profits.</p>
+                    <a href="{% url 'marketplace_list' %}" class="btn btn-outline-success">Learn More</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Featured Schemes Section -->
+<div class="container mt-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Featured Government Schemes</h2>
+        <a href="{% url 'schemes_list' %}" class="btn btn-outline-success">View All</a>
+    </div>
+    <div class="row g-4">
+        {% if schemes %}
+            {% for scheme in schemes %}
+            <div class="col-md-4">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ scheme.title }}</h5>
+                        <p class="card-text">{{ scheme.content|truncatewords:30 }}</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="badge bg-success">{{ scheme.get_language_display }}</span>
+                            <a href="{% url 'scheme_detail' scheme.slug %}" class="btn btn-sm btn-outline-success">Read More</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="col-12">
+                <div class="alert alert-info">
+                    No featured schemes available at the moment.
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Popular Farming Practices Section -->
+<div class="container mt-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Popular Farming Practices</h2>
+        <a href="{% url 'practices_list' %}" class="btn btn-outline-success">View All</a>
+    </div>
+    <div class="row g-4">
+        {% if recent_practices %}
+            {% for practice in recent_practices %}
+            <div class="col-md-6">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ practice.title }}</h5>
+                        <span class="badge bg-primary mb-2">{{ practice.get_practice_type_display }}</span>
+                        <p class="card-text">{{ practice.content|truncatewords:50 }}</p>
+                        <a href="{% url 'practice_detail' practice.slug %}" class="btn btn-sm btn-outline-success">Read More</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="col-12">
+                <div class="alert alert-info">
+                    No popular farming practices available at the moment.
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Latest Technologies Section -->
+<div class="container mt-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Latest Agricultural Technologies</h2>
+        <a href="{% url 'technologies_list' %}" class="btn btn-outline-success">View All</a>
+    </div>
+    <div class="row g-4">
+        {% if recent_technologies %}
+            {% for technology in recent_technologies %}
+            <div class="col-md-4">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ technology.title }}</h5>
+                        <p class="card-text">{{ technology.content|truncatewords:30 }}</p>
+                        <p class="text-muted">Implementation Cost: ${{ technology.implementation_cost }}</p>
+                        <a href="{% url 'technology_detail' technology.slug %}" class="btn btn-sm btn-outline-success">Read More</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="col-12">
+                <div class="alert alert-info">
+                    No latest technologies available at the moment.
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Marketplace Highlights Section -->
+<div class="container mt-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Marketplace Highlights</h2>
+        <a href="{% url 'marketplace_list' %}" class="btn btn-outline-success">View All</a>
+    </div>
+    <div class="row g-4">
+        {% if recent_products %}
+            {% for product in recent_products %}
+            <div class="col-md-3">
+                <div class="card h-100 shadow-sm">
+                    {% if product.image_url %}
+                    <img src="{{ product.image_url }}" class="card-img-top" alt="{{ product.title }}">
+                    {% else %}
+                    <div class="bg-light text-center py-4">
+                        <i class="fas fa-shopping-basket fa-3x text-secondary"></i>
+                    </div>
+                    {% endif %}
+                    <div class="card-body">
+                        <h5 class="card-title">{{ product.title }}</h5>
+                        <p class="card-text text-success fw-bold">${{ product.price }}</p>
+                        <p class="card-text small">{{ product.location }}</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="badge bg-secondary">{{ product.category.name }}</span>
+                            <a href="{% url 'marketplace_detail' product.id %}" class="btn btn-sm btn-outline-success">View</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="col-12">
+                <div class="alert alert-info">
+                    No marketplace products available at the moment.
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Educational Resources Section -->
+<div class="container mt-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Educational Resources</h2>
+        <a href="{% url 'educational_list' %}" class="btn btn-outline-success">View All</a>
+    </div>
+    <div class="row g-4">
+        {% if recent_resources %}
+            {% for resource in recent_resources %}
+            <div class="col-md-6">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-body">
+                        <div class="d-flex">
+                            <div class="flex-shrink-0">
+                                {% if resource.resource_type == 'video' %}
+                                <i class="fas fa-video fa-2x text-danger me-3"></i>
+                                {% elif resource.resource_type == 'document' %}
+                                <i class="fas fa-file-pdf fa-2x text-primary me-3"></i>
+                                {% elif resource.resource_type == 'article' %}
+                                <i class="fas fa-newspaper fa-2x text-info me-3"></i>
+                                {% elif resource.resource_type == 'research' %}
+                                <i class="fas fa-microscope fa-2x text-warning me-3"></i>
+                                {% else %}
+                                <i class="fas fa-book fa-2x text-success me-3"></i>
+                                {% endif %}
+                            </div>
+                            <div class="flex-grow-1">
+                                <h5 class="card-title">{{ resource.title }}</h5>
+                                <span class="badge bg-info mb-2">{{ resource.get_resource_type_display }}</span>
+                                <p class="card-text">{{ resource.content|truncatewords:30 }}</p>
+                                <a href="{% url 'educational_detail' resource.slug %}" class="btn btn-sm btn-outline-success">Learn More</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="col-12">
+                <div class="alert alert-info">
+                    No educational resources available at the moment.
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Blog Posts Section -->
+<div class="container mt-5 mb-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Latest from the Blog</h2>
+        <a href="{% url 'blog_list' %}" class="btn btn-outline-success">View All</a>
+    </div>
+    <div class="row g-4">
+        {% if blog_posts %}
+            {% for post in blog_posts %}
+            <div class="col-md-4">
+                <div class="card h-100 shadow-sm">
+                    {% if post.image_url %}
+                    <img src="{{ post.image_url }}" class="card-img-top" alt="{{ post.title }}">
+                    {% endif %}
+                    <div class="card-body">
+                        <h5 class="card-title">{{ post.title }}</h5>
+                        <p class="card-text">{{ post.content|truncatewords:20 }}</p>
+                        <div class="d-flex justify-content-between">
+                            <small class="text-muted">By {{ post.author.get_full_name|default:post.author.username }}</small>
+                            <small class="text-muted">{{ post.created_at|date:"M d, Y" }}</small>
+                        </div>
+                    </div>
+                    <div class="card-footer bg-white">
+                        <a href="{% url 'blog_detail' post.slug %}" class="btn btn-sm btn-outline-success w-100">Read More</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="col-12">
+                <div class="alert alert-info">
+                    No blog posts available at the moment.
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Call to Action Section -->
+<div class="bg-light py-5 mt-5">
+    <div class="container text-center">
+        <h2>Join Our Agricultural Community</h2>
+        <p class="lead mb-4">Connect with other farmers, experts, and agricultural stakeholders for knowledge sharing and collaboration.</p>
+        <a href="{% url 'register' %}" class="btn btn-success btn-lg">Register Now</a>
+    </div>
+</div>
+{% endblock %}

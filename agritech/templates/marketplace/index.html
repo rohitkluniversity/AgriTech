@@ -1,0 +1,139 @@
+{% extends 'base.html' %}
+
+{% block title %}Marketplace - AgriTech{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <h1 class="text-success mb-4">Agricultural Marketplace</h1>
+    
+    <!-- Category Filter -->
+    <div class="row mb-4">
+        <div class="col-lg-12">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title text-success mb-3">Browse by Category</h5>
+                    <div class="d-flex flex-wrap gap-2">
+                        <a href="{% url 'marketplace_list' %}" class="btn {% if not selected_category %}btn-success{% else %}btn-outline-success{% endif %}">
+                            All Categories
+                        </a>
+                        {% for category in categories %}
+                        <a href="{% url 'marketplace_list' %}?category={{ category.id }}" class="btn {% if selected_category == category.id|stringformat:'s' %}btn-success{% else %}btn-outline-success{% endif %}">
+                            {{ category.name }}
+                        </a>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row mb-4">
+        <div class="col-lg-8">
+            <div class="card bg-light">
+                <div class="card-body">
+                    <h5 class="card-title text-success">About the Marketplace</h5>
+                    <p class="card-text">
+                        Our agricultural marketplace connects farmers directly with buyers, allowing for the 
+                        purchase and sale of agricultural products without intermediaries. Browse through the 
+                        products listed below, or if you're a seller, create your own listing.
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="card bg-success text-white">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Sell Your Products</h5>
+                    <p class="card-text">Are you a farmer looking to sell your products?</p>
+                    {% if user.is_authenticated and user.profile.user_type == 'seller' %}
+                    <a href="{% url 'create_listing' %}" class="btn btn-light">Create a Listing</a>
+                    {% elif user.is_authenticated %}
+                    <p class="small">To sell products, update your profile to seller type.</p>
+                    <a href="{% url 'profile' %}" class="btn btn-light">Update Profile</a>
+                    {% else %}
+                    <a href="{% url 'register' %}" class="btn btn-light">Register as Seller</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    {% if products %}
+    <div class="row g-4">
+        {% for product in products %}
+        <div class="col-md-3">
+            <div class="card h-100 product-card">
+                {% if product.image_url %}
+                <div class="product-image-container">
+                    <img src="{{ product.image_url }}" class="card-img-top" alt="{{ product.title }}">
+                </div>
+                {% else %}
+                <div class="product-image-container bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
+                    <i class="fas fa-seedling fa-3x text-success"></i>
+                </div>
+                {% endif %}
+                <div class="card-body">
+                    <h5 class="card-title">{{ product.title }}</h5>
+                    <p class="card-text text-muted small">{{ product.category.name }}</p>
+                    <p class="card-text">{{ product.description|truncatechars:60 }}</p>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="fw-bold text-success">₹{{ product.price }}</span>
+                        <a href="{% url 'marketplace_detail' product.id %}" class="btn btn-sm btn-outline-success">View Details</a>
+                    </div>
+                </div>
+                <div class="card-footer bg-white">
+                    <small class="text-muted">
+                        <i class="fas fa-map-marker-alt"></i> {{ product.location }} | 
+                        <i class="fas fa-user"></i> {{ product.seller.username }}
+                    </small>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    
+    <!-- Pagination -->
+    {% if products.has_other_pages %}
+    <nav class="mt-5" aria-label="Page navigation">
+        <ul class="pagination justify-content-center">
+            {% if products.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?{% if selected_category %}category={{ selected_category }}&{% endif %}page={{ products.previous_page_number }}" aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
+                </a>
+            </li>
+            {% else %}
+            <li class="page-item disabled">
+                <span class="page-link">&laquo;</span>
+            </li>
+            {% endif %}
+            
+            {% for i in products.paginator.page_range %}
+                {% if products.number == i %}
+                <li class="page-item active"><span class="page-link">{{ i }}</span></li>
+                {% else %}
+                <li class="page-item"><a class="page-link" href="?{% if selected_category %}category={{ selected_category }}&{% endif %}page={{ i }}">{{ i }}</a></li>
+                {% endif %}
+            {% endfor %}
+            
+            {% if products.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?{% if selected_category %}category={{ selected_category }}&{% endif %}page={{ products.next_page_number }}" aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                </a>
+            </li>
+            {% else %}
+            <li class="page-item disabled">
+                <span class="page-link">&raquo;</span>
+            </li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+    {% else %}
+    <div class="alert alert-info">
+        No products available at the moment. Please check back later or create a listing if you're a seller.
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

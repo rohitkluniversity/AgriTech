@@ -1,0 +1,110 @@
+{% extends 'base.html' %}
+
+{% block title %}Farming Practices - AgriTech{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <h1 class="text-success mb-4">Farming Practices</h1>
+    
+    <!-- Practice Types Filter -->
+    <div class="mb-4">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title text-success mb-3">Filter by Practice Type</h5>
+                <div class="d-flex flex-wrap gap-2">
+                    <a href="{% url 'practices_list' %}" class="btn {% if not practice_type %}btn-success{% else %}btn-outline-success{% endif %}">
+                        All Practices
+                    </a>
+                    {% for key, value in practice_types.items %}
+                    <a href="{% url 'practices_list' %}?type={{ key }}" class="btn {% if practice_type == key %}btn-success{% else %}btn-outline-success{% endif %}">
+                        {{ value }}
+                    </a>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row mb-4">
+        <div class="col-lg-12">
+            <div class="card bg-light">
+                <div class="card-body">
+                    <h5 class="card-title text-success">About Farming Practices</h5>
+                    <p class="card-text">
+                        Farming practices are the methods and techniques used in agricultural production. 
+                        These practices range from traditional methods to modern approaches, each with its own
+                        benefits and challenges. Learning about different farming practices can help you choose
+                        the most suitable approach for your specific conditions and goals.
+                    </p>
+                    <p class="card-text">
+                        Browse through the available farming practices below to find detailed information on 
+                        implementation guides, benefits, and success stories.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    {% if practices %}
+    <div class="row g-4">
+        {% for practice in practices %}
+        <div class="col-md-6">
+            <div class="card h-100 practice-card">
+                <div class="card-body">
+                    <div class="practice-type-badge mb-2">
+                        <span class="badge bg-success">{{ practice.get_practice_type_display }}</span>
+                    </div>
+                    <h3 class="card-title text-success">{{ practice.title }}</h3>
+                    <p class="card-text">{{ practice.content|truncatewords:30 }}</p>
+                    <a href="{% url 'practice_detail' practice.slug %}" class="btn btn-outline-success">Learn More</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    
+    <!-- Pagination -->
+    {% if practices.has_other_pages %}
+    <nav class="mt-5" aria-label="Page navigation">
+        <ul class="pagination justify-content-center">
+            {% if practices.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?{% if practice_type %}type={{ practice_type }}&{% endif %}page={{ practices.previous_page_number }}" aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
+                </a>
+            </li>
+            {% else %}
+            <li class="page-item disabled">
+                <span class="page-link">&laquo;</span>
+            </li>
+            {% endif %}
+            
+            {% for i in practices.paginator.page_range %}
+                {% if practices.number == i %}
+                <li class="page-item active"><span class="page-link">{{ i }}</span></li>
+                {% else %}
+                <li class="page-item"><a class="page-link" href="?{% if practice_type %}type={{ practice_type }}&{% endif %}page={{ i }}">{{ i }}</a></li>
+                {% endif %}
+            {% endfor %}
+            
+            {% if practices.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?{% if practice_type %}type={{ practice_type }}&{% endif %}page={{ practices.next_page_number }}" aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                </a>
+            </li>
+            {% else %}
+            <li class="page-item disabled">
+                <span class="page-link">&raquo;</span>
+            </li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+    {% else %}
+    <div class="alert alert-info">
+        No farming practices available at the moment. Please check back later.
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,107 @@
+{% extends 'base.html' %}
+
+{% block title %}Search Results - AgriTech{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <h1 class="text-success mb-4">Search Results</h1>
+    
+    <!-- Search Form -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <form action="{% url 'search' %}" method="GET" class="row g-3">
+                <div class="col-md-8">
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fas fa-search"></i></span>
+                        <input type="text" name="query" class="form-control" placeholder="Search..." value="{{ query }}">
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <select name="category" class="form-select">
+                        <option value="all" {% if category == 'all' %}selected{% endif %}>All Categories</option>
+                        <option value="schemes" {% if category == 'schemes' %}selected{% endif %}>Government Schemes</option>
+                        <option value="practices" {% if category == 'practices' %}selected{% endif %}>Farming Practices</option>
+                        <option value="technologies" {% if category == 'technologies' %}selected{% endif %}>Agricultural Technologies</option>
+                        <option value="marketplace" {% if category == 'marketplace' %}selected{% endif %}>Marketplace</option>
+                        <option value="educational" {% if category == 'educational' %}selected{% endif %}>Educational Resources</option>
+                        <option value="blog" {% if category == 'blog' %}selected{% endif %}>Blog</option>
+                    </select>
+                </div>
+                <div class="col-md-1">
+                    <button type="submit" class="btn btn-success w-100">Search</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Search Results -->
+    {% if query %}
+    <div class="card">
+        <div class="card-header bg-success text-white">
+            <h5 class="mb-0">Results for "{{ query }}" {% if category != 'all' %}in {{ category }}{% endif %}</h5>
+        </div>
+        <div class="card-body">
+            {% if results %}
+            <div class="list-group">
+                {% for result in results %}
+                <a href="
+                    {% if result.type == 'scheme' %}{% url 'scheme_detail' result.obj.slug %}
+                    {% elif result.type == 'practice' %}{% url 'practice_detail' result.obj.slug %}
+                    {% elif result.type == 'technology' %}{% url 'technology_detail' result.obj.slug %}
+                    {% elif result.type == 'product' %}{% url 'marketplace_detail' result.obj.id %}
+                    {% elif result.type == 'resource' %}{% url 'educational_detail' result.obj.slug %}
+                    {% elif result.type == 'post' %}{% url 'blog_detail' result.obj.slug %}
+                    {% endif %}
+                " class="list-group-item list-group-item-action">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h5 class="mb-1">{{ result.obj.title }}</h5>
+                            <p class="mb-1 text-muted">{{ result.obj.content|truncatewords:20 }}</p>
+                            <small>
+                                {% if result.type == 'scheme' %}
+                                <span class="badge bg-primary">Government Scheme</span>
+                                {% elif result.type == 'practice' %}
+                                <span class="badge bg-success">{{ result.obj.get_practice_type_display }}</span>
+                                {% elif result.type == 'technology' %}
+                                <span class="badge bg-info text-dark">Agricultural Technology</span>
+                                {% elif result.type == 'product' %}
+                                <span class="badge bg-warning text-dark">Marketplace Product</span> | Price: ₹{{ result.obj.price }}
+                                {% elif result.type == 'resource' %}
+                                <span class="badge bg-secondary">{{ result.obj.get_resource_type_display }}</span>
+                                {% elif result.type == 'post' %}
+                                <span class="badge bg-danger">Blog Post</span> | {{ result.obj.created_at|date:"F d, Y" }}
+                                {% endif %}
+                            </small>
+                        </div>
+                        <i class="fas fa-chevron-right text-muted"></i>
+                    </div>
+                </a>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="text-center py-5">
+                <i class="fas fa-search fa-4x text-muted mb-3"></i>
+                <h3>No Results Found</h3>
+                <p class="text-muted">We couldn't find any matches for "{{ query }}".</p>
+                <p>Suggestions:</p>
+                <ul class="list-unstyled">
+                    <li>Check your spelling</li>
+                    <li>Try more general keywords</li>
+                    <li>Try different keywords</li>
+                    <li>Try searching in all categories</li>
+                </ul>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    {% else %}
+    <div class="card">
+        <div class="card-body text-center py-5">
+            <i class="fas fa-search fa-4x text-muted mb-3"></i>
+            <h3>No Search Query Provided</h3>
+            <p class="text-muted">Please enter a search term to find content across our platform.</p>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,134 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ resource.title }} - Educational Resources - AgriTech{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'educational_list' %}">Educational Resources</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{{ resource.title }}</li>
+        </ol>
+    </nav>
+
+    <div class="row">
+        <div class="col-lg-8">
+            <article class="resource-detail">
+                <h1 class="text-success mb-3">{{ resource.title }}</h1>
+                <span class="badge bg-success mb-3">{{ resource.get_resource_type_display }}</span>
+                
+                <div class="mb-4">
+                    <small class="text-muted">
+                        <i class="fas fa-calendar-alt me-1"></i> Updated: {{ resource.updated_at|date:"F d, Y" }}
+                    </small>
+                </div>
+                
+                <div class="resource-content mb-5">
+                    {{ resource.content|linebreaks }}
+                </div>
+                
+                {% if resource.resource_url %}
+                <div class="resource-link mb-5">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title text-success"><i class="fas fa-link me-2"></i>Resource Link</h5>
+                            <p class="card-text">Click the button below to access the full resource:</p>
+                            <a href="{{ resource.resource_url }}" target="_blank" class="btn btn-success">
+                                <i class="fas fa-external-link-alt me-1"></i> 
+                                {% if resource.resource_type == 'video' %}
+                                    Watch Video
+                                {% elif resource.resource_type == 'document' %}
+                                    View Document
+                                {% elif resource.resource_type == 'research' %}
+                                    Read Research Paper
+                                {% elif resource.resource_type == 'case_study' %}
+                                    View Case Study
+                                {% elif resource.resource_type == 'training' %}
+                                    Access Training Material
+                                {% else %}
+                                    Access Resource
+                                {% endif %}
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+                
+                <div class="d-flex justify-content-between mt-5">
+                    <a href="{% url 'educational_list' %}" class="btn btn-outline-secondary">
+                        <i class="fas fa-arrow-left me-1"></i> Back to Resources
+                    </a>
+                    
+                    <!-- Share buttons -->
+                    <div class="share-buttons">
+                        <button class="btn btn-outline-primary" onclick="window.open('https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(window.location.href), '_blank')">
+                            <i class="fab fa-facebook-f"></i>
+                        </button>
+                        <button class="btn btn-outline-info" onclick="window.open('https://twitter.com/intent/tweet?url=' + encodeURIComponent(window.location.href) + '&text=' + encodeURIComponent('{{ resource.title }}'), '_blank')">
+                            <i class="fab fa-twitter"></i>
+                        </button>
+                        <button class="btn btn-outline-success" onclick="window.open('https://api.whatsapp.com/send?text=' + encodeURIComponent('{{ resource.title }} - ' + window.location.href), '_blank')">
+                            <i class="fab fa-whatsapp"></i>
+                        </button>
+                    </div>
+                </div>
+            </article>
+        </div>
+        
+        <div class="col-lg-4">
+            <div class="card mb-4">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">Resource Summary</h5>
+                </div>
+                <div class="card-body">
+                    <ul class="list-unstyled mb-0">
+                        <li class="mb-2">
+                            <strong><i class="fas fa-check-circle text-success me-2"></i>Title:</strong>
+                            {{ resource.title }}
+                        </li>
+                        <li class="mb-2">
+                            <strong><i class="fas fa-book text-success me-2"></i>Type:</strong>
+                            {{ resource.get_resource_type_display }}
+                        </li>
+                        <li class="mb-2">
+                            <strong><i class="fas fa-language text-success me-2"></i>Language:</strong>
+                            {{ resource.get_language_display }}
+                        </li>
+                        <li>
+                            <strong><i class="fas fa-calendar-alt text-success me-2"></i>Published:</strong>
+                            {{ resource.created_at|date:"F d, Y" }}
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">Related Resources</h5>
+                </div>
+                <div class="card-body">
+                    <p>Explore more resources related to farming:</p>
+                    <ul class="list-unstyled mb-0">
+                        <li class="mb-2">
+                            <a href="{% url 'practices_list' %}" class="text-decoration-none">
+                                <i class="fas fa-seedling text-success me-2"></i> Farming Practices
+                            </a>
+                        </li>
+                        <li class="mb-2">
+                            <a href="{% url 'technologies_list' %}" class="text-decoration-none">
+                                <i class="fas fa-tractor text-success me-2"></i> Agricultural Technologies
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{% url 'blog_list' %}" class="text-decoration-none">
+                                <i class="fas fa-blog text-success me-2"></i> Blog Articles
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

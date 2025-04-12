@@ -1,0 +1,61 @@
+AgriTech Platform
+Project Overview
+AgriTech is a comprehensive agricultural platform built with Django that bridges the gap between farmers, agricultural information, and markets. The platform provides a centralized hub for government schemes, farming practices, modern agricultural technologies, marketplace features, and educational resources.
+
+Features
+Government Schemes
+Access to various agricultural schemes offered by the government
+Detailed information on eligibility criteria, benefits, and application processes
+Direct contact information for scheme administrators
+Farming Practices
+Information on various farming techniques (organic, fish farming, mountain farming, etc.)
+Step-by-step implementation guides
+Benefits and success stories of different farming practices
+Agricultural Technologies
+Latest agricultural technologies and innovations
+Implementation costs and usage instructions
+Supplier information for technology adoption
+Marketplace
+Buy and sell agricultural products directly
+Browse products by categories
+Contact sellers directly
+Place orders with delivery information
+Educational Resources
+Articles, videos, and documents on farming techniques
+Research papers and case studies
+Training materials and workshops information
+Blog System
+Latest news and insights about agriculture
+Category and tag-based organization
+User comments and engagement
+Featured posts and popular tags
+Technical Details
+Built With
+Django - The web framework
+Bootstrap - Frontend design
+SQLite - Database (development)
+Pillow - Image processing
+Admin Access
+URL: /admin/
+Username: admin
+Password: admin123
+Project Structure
+agritech/ - Main Django project folder
+main/ - Core application with models and views
+templates/ - HTML templates for all sections
+static/ - CSS, JavaScript, and image files
+Installation & Setup
+Clone the repository
+Create a virtual environment
+Install dependencies: pip install -r requirements.txt
+Run migrations: python manage.py migrate
+Create a superuser: python manage.py createsuperuser
+Run the server: python manage.py runserver
+Access the site at: http://localhost:8000/
+Future Enhancements
+Advanced search functionality
+User ratings and reviews
+Direct messaging between users
+Mobile application
+Weather forecasts and alerts
+Integration with external agricultural APIs

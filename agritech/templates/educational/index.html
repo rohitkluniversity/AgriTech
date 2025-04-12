@@ -1,0 +1,111 @@
+{% extends 'base.html' %}
+
+{% block title %}Educational Resources - AgriTech{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <h1 class="text-success mb-4">Educational Resources</h1>
+    
+    <!-- Resource Types Filter -->
+    <div class="mb-4">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title text-success mb-3">Filter by Resource Type</h5>
+                <div class="d-flex flex-wrap gap-2">
+                    <a href="{% url 'educational_list' %}" class="btn {% if not resource_type %}btn-success{% else %}btn-outline-success{% endif %}">
+                        All Resources
+                    </a>
+                    {% for key, value in resource_types.items %}
+                    <a href="{% url 'educational_list' %}?type={{ key }}" class="btn {% if resource_type == key %}btn-success{% else %}btn-outline-success{% endif %}">
+                        {{ value }}
+                    </a>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row mb-4">
+        <div class="col-lg-12">
+            <div class="card bg-light">
+                <div class="card-body">
+                    <h5 class="card-title text-success">About Educational Resources</h5>
+                    <p class="card-text">
+                        Our educational resources section provides farmers with access to valuable knowledge and 
+                        learning materials to improve their agricultural practices. Browse through articles, videos, 
+                        documents, research papers, case studies, and training materials to enhance your farming skills.
+                    </p>
+                    <p class="card-text">
+                        Use the filter above to find specific types of resources based on your learning preferences.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    {% if resources %}
+    <div class="row g-4">
+        {% for resource in resources %}
+        <div class="col-md-6">
+            <div class="card h-100 resource-card">
+                <div class="card-body">
+                    <div class="resource-type-badge mb-2">
+                        <span class="badge bg-success">{{ resource.get_resource_type_display }}</span>
+                    </div>
+                    <h3 class="card-title text-success">{{ resource.title }}</h3>
+                    <p class="card-text">{{ resource.content|truncatewords:30 }}</p>
+                    <div class="mt-auto d-flex justify-content-between align-items-center">
+                        <span class="text-muted"><i class="fas fa-calendar-alt me-1"></i> {{ resource.created_at|date:"F d, Y" }}</span>
+                        <a href="{% url 'educational_detail' resource.slug %}" class="btn btn-outline-success">View Resource</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    
+    <!-- Pagination -->
+    {% if resources.has_other_pages %}
+    <nav class="mt-5" aria-label="Page navigation">
+        <ul class="pagination justify-content-center">
+            {% if resources.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?{% if resource_type %}type={{ resource_type }}&{% endif %}page={{ resources.previous_page_number }}" aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
+                </a>
+            </li>
+            {% else %}
+            <li class="page-item disabled">
+                <span class="page-link">&laquo;</span>
+            </li>
+            {% endif %}
+            
+            {% for i in resources.paginator.page_range %}
+                {% if resources.number == i %}
+                <li class="page-item active"><span class="page-link">{{ i }}</span></li>
+                {% else %}
+                <li class="page-item"><a class="page-link" href="?{% if resource_type %}type={{ resource_type }}&{% endif %}page={{ i }}">{{ i }}</a></li>
+                {% endif %}
+            {% endfor %}
+            
+            {% if resources.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?{% if resource_type %}type={{ resource_type }}&{% endif %}page={{ resources.next_page_number }}" aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                </a>
+            </li>
+            {% else %}
+            <li class="page-item disabled">
+                <span class="page-link">&raquo;</span>
+            </li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+    {% else %}
+    <div class="alert alert-info">
+        No educational resources available at the moment. Please check back later.
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

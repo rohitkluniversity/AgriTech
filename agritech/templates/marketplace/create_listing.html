@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+
+{% block title %}Create Listing - Marketplace - AgriTech{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'marketplace_list' %}">Marketplace</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Create Listing</li>
+        </ol>
+    </nav>
+
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h3 class="mb-0">Create a New Product Listing</h3>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+                        
+                        {% if form.non_field_errors %}
+                        <div class="alert alert-danger">
+                            {% for error in form.non_field_errors %}
+                            {{ error }}
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                        
+                        <div class="mb-3">
+                            <label for="{{ form.category.id_for_label }}" class="form-label">Category</label>
+                            {{ form.category.errors }}
+                            <select name="{{ form.category.name }}" id="{{ form.category.id_for_label }}" class="form-select">
+                                {% for choice in form.category.field.choices %}
+                                <option value="{{ choice.0 }}" {% if form.category.value == choice.0 %}selected{% endif %}>{{ choice.1 }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="{{ form.title.id_for_label }}" class="form-label">Title</label>
+                            {{ form.title.errors }}
+                            <input type="text" name="{{ form.title.name }}" id="{{ form.title.id_for_label }}" class="form-control" required>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="{{ form.description.id_for_label }}" class="form-label">Description</label>
+                            {{ form.description.errors }}
+                            <textarea name="{{ form.description.name }}" id="{{ form.description.id_for_label }}" class="form-control" rows="5" required></textarea>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="{{ form.price.id_for_label }}" class="form-label">Price (₹)</label>
+                                {{ form.price.errors }}
+                                <input type="number" name="{{ form.price.name }}" id="{{ form.price.id_for_label }}" class="form-control" step="0.01" min="0" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="{{ form.quantity.id_for_label }}" class="form-label">Quantity</label>
+                                {{ form.quantity.errors }}
+                                <input type="number" name="{{ form.quantity.name }}" id="{{ form.quantity.id_for_label }}" class="form-control" min="1" required>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="{{ form.location.id_for_label }}" class="form-label">Location</label>
+                            {{ form.location.errors }}
+                            <input type="text" name="{{ form.location.name }}" id="{{ form.location.id_for_label }}" class="form-control" required>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="{{ form.image_url.id_for_label }}" class="form-label">Image URL (optional)</label>
+                            {{ form.image_url.errors }}
+                            <input type="url" name="{{ form.image_url.name }}" id="{{ form.image_url.id_for_label }}" class="form-control">
+                            <div class="form-text">Enter a URL to an image of your product. If left blank, a default image will be used.</div>
+                        </div>
+                        
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle me-2"></i> All listings are subject to review. Please ensure your product complies with our guidelines.
+                        </div>
+                        
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a href="{% url 'marketplace_list' %}" class="btn btn-outline-secondary">Cancel</a>
+                            <button type="submit" class="btn btn-success">Create Listing</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
